@@ -19,6 +19,21 @@ class RMSNorm(Layer):
         return output * self.weight
 
 
+class FeedForward(Layer):
+    def __init__(self, dim: int, hidden_dim: int):
+        super().__init__()
+        self.dim = dim
+        self.hidden_dim = hidden_dim
+
+    def build(self, input_shape):
+        self.w1 = keras.layers.Dense(self.hidden_dim, use_bias=False)
+        self.w2 = keras.layers.Dense(self.dim, use_bias=False)
+        self.w3 = keras.layers.Dense(self.hidden_dim, use_bias=False)
+
+    def call(self, inputs):
+        return self.w2(ops.silu(self.w1(inputs))*self.w3(inputs))
+
+
 def get_model():
     pass
 
